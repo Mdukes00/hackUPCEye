@@ -48,7 +48,7 @@ public class CameraController {
         // preserve image ratio
         current_frame.setPreserveRatio(true);
         this.faceCascade.load("./cascades/haarcascades/haarcascade_frontalface_default.xml");
-        this.eyeCascade.load("./cascades/haarcascades/haarcascade_eye.xml");
+        this.eyeCascade.load("./cascades/haarcascades/haarcascade_lefteye_2splits.xml");
     }
 
     @FXML
@@ -138,11 +138,6 @@ public class CameraController {
 
     private void detectAndDisplay(Mat frame)
     {
-        MatOfRect faces = new MatOfRect();
-        MatOfRect eyes = new MatOfRect();
-
-        //Mat grayFrame = new Mat();
-
         // convert the frame in gray scale
         Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BGR2GRAY);
         // equalize the frame histogram to improve the result
@@ -168,6 +163,7 @@ public class CameraController {
         }
 
         // detect faces
+        MatOfRect faces = new MatOfRect();
         this.faceCascade.detectMultiScale(frame, faces, 1.1, 2, 0 | Objdetect.CASCADE_SCALE_IMAGE,
                 new Size(this.absoluteFaceSize, this.absoluteFaceSize), new Size());
 
@@ -177,13 +173,21 @@ public class CameraController {
             Imgproc.rectangle(frame, facesArray[i].tl(), facesArray[i].br(), new Scalar(0, 255, 0, 255), 3);
         }
 
-        //detect eyes
-        this.eyeCascade.detectMultiScale(frame, eyes);
+        MatOfRect eyes = new MatOfRect();
+        eyeCascade.detectMultiScale(frame, eyes);
+        for (Rect rect : eyes.toArray()) {
+            Imgproc.putText(frame, "Eye", new Point(rect.x,rect.y-5), 1, 2, new Scalar(0,0,255));
 
-        // each rectangle in eyes is a eye: draw them!
-        Rect[] eyesArray = eyes.toArray();
-        for(int j = 0; j < eyesArray.length; j++)
-            Imgproc.rectangle(frame, eyesArray[j].tl(), eyesArray[j].br(), new Scalar(0, 255, 0, 255), 2);
+            Imgproc.rectangle(frame, rect.tl(), rect.br(), new Scalar(0, 255, 0, 255), 2);
+        }
+
+//        //detect eyes
+//        this.eyeCascade.detectMultiScale(frame, eyes);
+//
+//        // each rectangle in eyes is a eye: draw them!
+//        Rect[] eyesArray = eyes.toArray();
+//        for(int j = 0; j < eyesArray.length; j++)
+//            Imgproc.rectangle(frame, eyesArray[j].tl(), eyesArray[j].br(), new Scalar(0, 255, 0, 255), 2);
 
     }
 }
