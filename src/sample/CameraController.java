@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.opencv.core.*;
+import org.opencv.imgcodecs.Imgcodecs;
 
 import Utils.Utils;
 import org.opencv.imgproc.Imgproc;
@@ -30,6 +31,7 @@ public class CameraController {
     private CascadeClassifier eyeCascade;
     private int absoluteFaceSize;
     private int absoluteEyeSize;
+    private int imgCount = 0;
 
     /**
      * Init the controller, at start time
@@ -48,7 +50,7 @@ public class CameraController {
         // preserve image ratio
         current_frame.setPreserveRatio(true);
         this.faceCascade.load("./cascades/haarcascades/haarcascade_frontalface_default.xml");
-        this.eyeCascade.load("./cascades/haarcascades/haarcascade_lefteye_2splits.xml");
+        this.eyeCascade.load("./cascades/haarcascades/haarcascade_eye.xml");
     }
 
     @FXML
@@ -162,32 +164,41 @@ public class CameraController {
             }
         }
 
-        // detect faces
+        //detect faces
         MatOfRect faces = new MatOfRect();
+
+
         this.faceCascade.detectMultiScale(frame, faces, 1.1, 2, 0 | Objdetect.CASCADE_SCALE_IMAGE,
                 new Size(this.absoluteFaceSize, this.absoluteFaceSize), new Size());
 
         // each rectangle in faces is a face: draw them!
         Rect[] facesArray = faces.toArray();
         for (int i = 0; i < facesArray.length; i++){
+            Imgproc.putText(frame, "Face", new Point(facesArray[i].x,facesArray[i].y-5), 1, 2, new Scalar(0,0,255));
             Imgproc.rectangle(frame, facesArray[i].tl(), facesArray[i].br(), new Scalar(0, 255, 0, 255), 3);
-        }
-
-        MatOfRect eyes = new MatOfRect();
-        eyeCascade.detectMultiScale(frame, eyes);
-        for (Rect rect : eyes.toArray()) {
-            Imgproc.putText(frame, "Eye", new Point(rect.x,rect.y-5), 1, 2, new Scalar(0,0,255));
-
-            Imgproc.rectangle(frame, rect.tl(), rect.br(), new Scalar(0, 255, 0, 255), 2);
-        }
-
-//        //detect eyes
-//        this.eyeCascade.detectMultiScale(frame, eyes);
 //
-//        // each rectangle in eyes is a eye: draw them!
-//        Rect[] eyesArray = eyes.toArray();
-//        for(int j = 0; j < eyesArray.length; j++)
-//            Imgproc.rectangle(frame, eyesArray[j].tl(), eyesArray[j].br(), new Scalar(0, 255, 0, 255), 2);
+//            Mat roi = new Mat(frame, facesArray[i]);
+//            MatOfRect eyes = new MatOfRect();
+//            this.eyeCascade.detectMultiScale(roi, eyes);
+//
+//            Rect[] eyesArray = eyes.toArray();
+//            for(int j = 0; j < eyesArray.length; j++)
+//                Imgproc.rectangle(roi, eyesArray[j].tl(), eyesArray[j].br(), new Scalar(0, 255, 0, 255), 2);
+        }
 
+        //detect eyes
+        MatOfRect eyes = new MatOfRect();
+        this.eyeCascade.detectMultiScale(frame, eyes);
+
+        // each rectangle in eyes is a eye: draw them!
+        Rect[] eyesArray = eyes.toArray();
+        for(int j = 0; j < eyesArray.length; j++){
+            Imgproc.putText(frame, "Eye", new Point(eyesArray[j].x,eyesArray[j].y-5), 1, 2, new Scalar(0,0,255));
+            Imgproc.rectangle(frame, eyesArray[j].tl(), eyesArray[j].br(), new Scalar(0, 255, 0, 255), 2);
+
+            Rect rectCrop = new Rect(eyesArray[j].x, eyesArray[j].y, eyesArray[j].width, eyesArray[j].height);
+            Mat image_roi = new Mat(frame,rectCrop);
+            Imgcodecs.imwrite("./crop_eye_"+(++imgCount)+".jpg",image_roi);
+        }
     }
 }
