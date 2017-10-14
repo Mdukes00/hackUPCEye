@@ -1,35 +1,36 @@
-package sample;
+package app;
 
+import app.Controllers.LandingController;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import org.opencv.core.Core;
+import app.Controllers.LiveDetectController;
 
 public class Main extends Application {
 
+    Scene landingScene, liveFeedScene, stillImageScene;
 
+    public Stage primaryStage;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
         try
         {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("CameraView.fxml"));
+            this.primaryStage = primaryStage;
 
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("Views/LandingView.fxml"));
             BorderPane root = (BorderPane) loader.load();
 
             primaryStage.setTitle("JavaFX meets OpenCV");
-            primaryStage.setScene(new Scene(root, 800, 600));
+            primaryStage.setScene(new Scene(root, 400, 300));
             primaryStage.show();
 
             // set the proper behavior on closing the application
-            CameraController controller = loader.getController();
-            controller.init();
-            primaryStage.setOnCloseRequest((we -> controller.setClosed()));
+            LandingController controller = loader.getController();
+            controller.init(primaryStage);
         }
         catch (Exception e)
         {

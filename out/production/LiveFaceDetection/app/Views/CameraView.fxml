@@ -11,7 +11,7 @@
 <?import javafx.scene.control.Label?>
 
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.CameraController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controllers.LiveDetectController">
    <bottom>
       <Button fx:id="toggle_camera_btn" mnemonicParsing="false" onAction="#toggleCamera" text="Toggle Camera" BorderPane.alignment="CENTER">
          <BorderPane.margin>

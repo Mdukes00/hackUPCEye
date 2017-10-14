@@ -1,4 +1,4 @@
-package sample;
+package app.Controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,7 +17,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class CameraController {
+public class LiveDetectController {
     @FXML
     private Button toggle_camera_btn;
     @FXML
@@ -34,7 +34,7 @@ public class CameraController {
     /**
      * Init the controller, at start time
      */
-    protected void init()
+    public void init()
     {
         this.isCameraActive = false;
         this.capture = new VideoCapture();
